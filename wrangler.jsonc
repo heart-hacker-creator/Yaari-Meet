@@ -15,8 +15,8 @@
   "vars": {
     // Filled in during setup. Secrets (SUPABASE_SECRET_KEY, VAPID_PRIVATE_JWK)
     // are set with `npx wrangler secret put`, never written here.
-    "SUPABASE_URL": "https://YOUR-PROJECT.supabase.co",
-    "VAPID_PUBLIC_KEY": ""
+    "SUPABASE_URL": "https://tnzxkxkodqqhvypwbsnj.supabase.co",
+    "VAPID_PUBLIC_KEY": "BNXnqzxCHcx4-S4INvTu-mvtJZ471fsZr6g-lVjaDQY6nJKTfNC6QltcPQC_GjAQ7u2kB688MokHiOAiGmMCBWA"
   },
   "observability": { "enabled": true }
 }
