@@ -346,6 +346,9 @@ const userFromRequest = async (db, request) => {
 };
 
 function device(ua = "") {
+  if (/Google|bingbot|bot\b|crawl|spider|slurp|Lighthouse|HeadlessChrome/i.test(ua)) {
+    return /Google/i.test(ua) ? "🤖 Google bot" : "🤖 Bot";
+  }
   const os = /iPhone|iPad/.test(ua) ? "iPhone" : /Android/.test(ua) ? "Android" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "Mac" : "Other";
   return /Mobi|Android|iPhone/.test(ua) ? `${os} phone` : `${os} computer`;
 }
@@ -375,7 +378,8 @@ async function visit(request, env, ctx) {
           referrer: String(body.referrer ?? "").slice(0, 300),
         };
         await db.insert("visits", row);
-        if (!settings?.alert_visits) return;
+        // Search-engine crawlers are logged but never alert the admin.
+        if (row.device.startsWith("🤖") || !settings?.alert_visits) return;
         const place = [row.city, row.region].filter(Boolean).join(", ") || row.country || "Unknown place";
         await notifyAdmins(env, db, {
           title: profile?.gender ? `🟢 ${profile.name} (${GENDER[profile.gender]}) is online` : "👀 New visitor",
