@@ -378,11 +378,10 @@ async function visit(request, env, ctx) {
           referrer: String(body.referrer ?? "").slice(0, 300),
         };
         await db.insert("visits", row);
-        // Search-engine crawlers are logged but never alert the admin.
-        if (row.device.startsWith("🤖") || !settings?.alert_visits) return;
+        if (!settings?.alert_visits) return;
         const place = [row.city, row.region].filter(Boolean).join(", ") || row.country || "Unknown place";
         await notifyAdmins(env, db, {
-          title: profile?.gender ? `🟢 ${profile.name} (${GENDER[profile.gender]}) is online` : "👀 New visitor",
+          title: profile?.gender ? `🟢 ${profile.name} (${GENDER[profile.gender]}) is online` : row.device.startsWith("🤖") ? `${row.device} visited` : "👀 New visitor",
           body: `${place} · ${row.device} · ${row.path}`,
           tag: "visit",
         });
