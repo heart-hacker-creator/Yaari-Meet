@@ -64,6 +64,7 @@ function setCredits(n) {
 async function renderLobby() {
   setCredits(profile.credits);
   $("meName").textContent = profile.name;
+  $("meInitial").textContent = (profile.name.trim()[0] ?? "?").toUpperCase();
   $("meBadge").hidden = !profile.verified;
 
   const [{ data: payments }, { data: checks }] = await Promise.all([
@@ -146,8 +147,9 @@ function send(msg) {
 }
 
 function setStranger(s) {
-  const text = s ? `${s.name} · ${s.gender === "female" ? "👧 Girl" : "👦 Boy"}${s.verified ? " · ✔ Verified" : ""}` : "";
+  const text = s ? `${s.name} · ${s.gender === "female" ? "Girl" : "Boy"}${s.verified ? " ✓" : ""}` : "";
   $("strangerTag").hidden = !s;
+  $("searching").hidden = !!s;
   $("strangerTag").textContent = text;
   $("strangerTag").dataset.name = s?.name ?? "";
   $("strangerText").textContent = text;
@@ -191,6 +193,7 @@ async function handle(msg) {
       break;
     case "waiting":
       log(`Looking for ${LABEL[msg.filter]}…`);
+      $("searchText").textContent = `Finding ${LABEL[msg.filter]}…`;
       break;
     case "matched":
       paired = true;

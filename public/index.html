@@ -18,9 +18,12 @@
   <meta property="og:image" content="https://yaarimeet.com/og.png">
   <meta property="og:locale" content="en_IN">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#0e1020">
+  <meta name="theme-color" content="#fbf6ee">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap">
   <link rel="stylesheet" href="/site.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"YaariMeet","url":"https://yaarimeet.com/","inLanguage":"en-IN"},{"@type":"Organization","name":"YaariMeet","url":"https://yaarimeet.com/","logo":"https://yaarimeet.com/icon-512.png","email":"contact@yaarimeet.com"},{"@type":"WebApplication","name":"YaariMeet","url":"https://yaarimeet.com/","applicationCategory":"CommunicationApplication","operatingSystem":"Android, iOS, Windows, macOS","browserRequirements":"Requires a modern browser with camera access for video chat","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is YaariMeet free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Random video chat and text chat are free forever. Only the optional Only girls / Only boys filters use credits (20 credits per minute, ₹25 = 100 credits)."}},{"@type":"Question","name":"Do I need to download an app?","acceptedAnswer":{"@type":"Answer","text":"No. YaariMeet works in Chrome, Safari and any modern browser on Android, iPhone and computers. You can add it to your home screen like an app."}},{"@type":"Question","name":"How do I talk to strangers on YaariMeet?","acceptedAnswer":{"@type":"Answer","text":"Sign in with Google, choose Random or a filter, pick video or text, and press Start. You are connected to a random person who is online right now."}},{"@type":"Question","name":"Are the girls and boys real?","acceptedAnswer":{"@type":"Answer","text":"Everyone signs in with a real Google account and picks their gender once. People can verify with a short selfie video to get a ✔ Verified badge, and fake genders get reported and banned."}},{"@type":"Question","name":"Is YaariMeet safe?","acceptedAnswer":{"@type":"Answer","text":"Video goes directly between you and the other person and is never recorded. Every chat has a Report button, and our team bans abusive accounts. YaariMeet is for adults 18+ only."}}]}]}</script>
 </head>
@@ -33,13 +36,21 @@
 <main>
 
 <section class="hero">
-  <h1>Random Video Chat with Strangers in India</h1>
-  <p class="lead">YaariMeet connects you face to face with new people in seconds. Free random video chat and text chat — no download, works on any phone.</p>
-  <div class="row">
-    <a class="btn primary big" href="/chat/">🎥 Start video chat</a>
-    <a class="btn big" href="/chat/">⌨️ Text chat</a>
+  <div>
+    <span class="kicker">Free · Video &amp; text · Made in India</span>
+    <h1>Random video chat with <em>strangers</em> in India.</h1>
+    <p class="lead">YaariMeet puts you face to face with someone new in seconds. Video or text, free, straight from your browser.</p>
+    <div class="actions">
+      <a class="btn primary big" href="/chat/">Start video chat</a>
+      <a class="btn big" href="/chat/">Text chat instead</a>
+    </div>
+    <ul class="fine"><li>Free</li><li>No download</li><li>Sign in with Google</li><li>18+ only</li></ul>
   </div>
-  <p class="small muted">Free · No download · Sign in with Google · 18+ only</p>
+  <div class="mock" aria-hidden="true">
+    <div class="tile them"><div class="face"></div><span class="tag">Stranger · Pune ✓</span></div>
+    <div class="tile you"><div class="face"></div><span class="tag">You</span></div>
+    <div class="bubble">Hi! Kahan se ho?</div>
+  </div>
 </section>
 
 <section>
@@ -54,13 +65,13 @@
 
 <section>
   <h2>Why people choose YaariMeet</h2>
-  <div class="grid">
-    <div class="feature"><b>🎲 Free random chat</b><p>Talk to strangers from across India at no cost. No hidden fees for random video chat.</p></div>
-    <div class="feature"><b>👧👦 Gender filter</b><p>Want to chat only with girls or only with boys? Turn on a filter for 20 credits a minute.</p></div>
-    <div class="feature"><b>✔ Verified profiles</b><p>Members can verify with a 3-second selfie video. Verified people are matched first.</p></div>
-    <div class="feature"><b>🎥 Video or ⌨️ text</b><p>Shy? Start with anonymous text chat. Ready? Switch to face-to-face video chat.</p></div>
-    <div class="feature"><b>🛡️ Report and ban</b><p>One tap reports abuse or fake gender. Our team reviews every report and bans offenders.</p></div>
-    <div class="feature"><b>📱 Works on any phone</b><p>Built for Jio, Airtel and Vi connections. Video adjusts to your network speed.</p></div>
+  <div class="features">
+    <div><h3>Random chat is free</h3><p>Talk to strangers from across India at no cost. No hidden fees, no trial that runs out.</p></div>
+    <div><h3>Choose girls or boys</h3><p>Want to chat only with girls or only with boys? Turn on a filter for 20 credits a minute.</p></div>
+    <div><h3>Verified profiles</h3><p>Members verify with a 3-second selfie video, checked by a person. Verified people are matched first.</p></div>
+    <div><h3>Video or text</h3><p>Shy? Start with anonymous text chat. Ready? Switch to face-to-face video.</p></div>
+    <div><h3>Report in one tap</h3><p>Abuse or a fake gender goes straight to our team, and offenders are banned.</p></div>
+    <div><h3>Light on data</h3><p>Built for Jio, Airtel and Vi. Video adjusts to your network speed.</p></div>
   </div>
 </section>
 
@@ -80,13 +91,19 @@
 <details><summary>Are the girls and boys real?</summary><p>Everyone signs in with a real Google account and picks their gender once. People can verify with a short selfie video to get a ✔ Verified badge, and fake genders get reported and banned.</p></details>
 <details><summary>Is YaariMeet safe?</summary><p>Video goes directly between you and the other person and is never recorded. Every chat has a Report button, and our team bans abusive accounts. YaariMeet is for adults 18+ only.</p></details></section>
 <section class="cta-band">
-  <h2>Ready to meet someone new?</h2>
-  <p>Free random chat · No download · Sign in with Google</p>
-  <a class="btn primary big" href="/chat/">Start video chat now</a>
+  <div>
+    <h2>Someone new is one tap away.</h2>
+    <p>Free random chat. No download. Sign in with Google.</p>
+  </div>
+  <a class="btn primary big" href="/chat/">Start chatting</a>
 </section>
 </main>
 <footer>
   <div class="cols">
+    <div>
+      <a class="logo" href="/">Yaari<span>Meet</span></a>
+      <p class="about-line">Random video and text chat for India. Meet someone new in seconds — free, with verified profiles and real moderation.</p>
+    </div>
     <div><b>Chat</b>
       <a href="/">Random video chat</a>
       <a href="/talk-to-strangers/">Talk to strangers</a>
@@ -105,7 +122,7 @@
       <a href="/terms/">Terms of use</a>
     </div>
   </div>
-  <p class="small">© 2026 YaariMeet · For adults 18+ only</p>
+  <p class="copy">© 2026 YaariMeet · For adults 18+ only · Made in India</p>
 </footer>
 </body>
 </html>

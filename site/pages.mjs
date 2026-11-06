@@ -41,13 +41,21 @@ export const pages = [
     ],
     body: `
 <section class="hero">
-  <h1>Random Video Chat with Strangers in India</h1>
-  <p class="lead">YaariMeet connects you face to face with new people in seconds. Free random video chat and text chat — no download, works on any phone.</p>
-  <div class="row">
-    <a class="btn primary big" href="/chat/">🎥 Start video chat</a>
-    <a class="btn big" href="/chat/">⌨️ Text chat</a>
+  <div>
+    <span class="kicker">Free · Video &amp; text · Made in India</span>
+    <h1>Random video chat with <em>strangers</em> in India.</h1>
+    <p class="lead">YaariMeet puts you face to face with someone new in seconds. Video or text, free, straight from your browser.</p>
+    <div class="actions">
+      <a class="btn primary big" href="/chat/">Start video chat</a>
+      <a class="btn big" href="/chat/">Text chat instead</a>
+    </div>
+    <ul class="fine"><li>Free</li><li>No download</li><li>Sign in with Google</li><li>18+ only</li></ul>
   </div>
-  <p class="small muted">Free · No download · Sign in with Google · 18+ only</p>
+  <div class="mock" aria-hidden="true">
+    <div class="tile them"><div class="face"></div><span class="tag">Stranger · Pune ✓</span></div>
+    <div class="tile you"><div class="face"></div><span class="tag">You</span></div>
+    <div class="bubble">Hi! Kahan se ho?</div>
+  </div>
 </section>
 
 <section>
@@ -57,13 +65,13 @@ export const pages = [
 
 <section>
   <h2>Why people choose YaariMeet</h2>
-  <div class="grid">
-    <div class="feature"><b>🎲 Free random chat</b><p>Talk to strangers from across India at no cost. No hidden fees for random video chat.</p></div>
-    <div class="feature"><b>👧👦 Gender filter</b><p>Want to chat only with girls or only with boys? Turn on a filter for 20 credits a minute.</p></div>
-    <div class="feature"><b>✔ Verified profiles</b><p>Members can verify with a 3-second selfie video. Verified people are matched first.</p></div>
-    <div class="feature"><b>🎥 Video or ⌨️ text</b><p>Shy? Start with anonymous text chat. Ready? Switch to face-to-face video chat.</p></div>
-    <div class="feature"><b>🛡️ Report and ban</b><p>One tap reports abuse or fake gender. Our team reviews every report and bans offenders.</p></div>
-    <div class="feature"><b>📱 Works on any phone</b><p>Built for Jio, Airtel and Vi connections. Video adjusts to your network speed.</p></div>
+  <div class="features">
+    <div><h3>Random chat is free</h3><p>Talk to strangers from across India at no cost. No hidden fees, no trial that runs out.</p></div>
+    <div><h3>Choose girls or boys</h3><p>Want to chat only with girls or only with boys? Turn on a filter for 20 credits a minute.</p></div>
+    <div><h3>Verified profiles</h3><p>Members verify with a 3-second selfie video, checked by a person. Verified people are matched first.</p></div>
+    <div><h3>Video or text</h3><p>Shy? Start with anonymous text chat. Ready? Switch to face-to-face video.</p></div>
+    <div><h3>Report in one tap</h3><p>Abuse or a fake gender goes straight to our team, and offenders are banned.</p></div>
+    <div><h3>Light on data</h3><p>Built for Jio, Airtel and Vi. Video adjusts to your network speed.</p></div>
   </div>
 </section>
 
@@ -218,11 +226,11 @@ export const pages = [
 
 <section>
   <h2>Made for India</h2>
-  <div class="grid">
-    <div class="feature"><b>🇮🇳 Indian users</b><p>Meet people from Delhi, Mumbai, Kolkata, Bengaluru, Hyderabad, Chennai, Pune, Jaipur and small towns too.</p></div>
-    <div class="feature"><b>📶 Light on data</b><p>Video adjusts to your connection, so it runs smoothly on 4G and 5G.</p></div>
-    <div class="feature"><b>🗣️ Any language</b><p>Chat in Hindi, English or your mother tongue. Practise spoken English with real people.</p></div>
-    <div class="feature"><b>💸 Pay with UPI</b><p>Credits for filters cost ₹25 for 100. Pay with Google Pay, PhonePe or Paytm.</p></div>
+  <div class="features">
+    <div><h3>Indian users</h3><p>Meet people from Delhi, Mumbai, Kolkata, Bengaluru, Hyderabad, Chennai, Pune, Jaipur and small towns too.</p></div>
+    <div><h3>Light on data</h3><p>Video adjusts to your connection, so it runs smoothly on 4G and 5G.</p></div>
+    <div><h3>Any language</h3><p>Chat in Hindi, English or your mother tongue. Practise spoken English with real people.</p></div>
+    <div><h3>Pay with UPI</h3><p>Credits for filters cost ₹25 for 100. Pay with Google Pay, PhonePe or Paytm.</p></div>
   </div>
 </section>
 
@@ -309,8 +317,8 @@ export const pages = [
 <section>
   <h2>Add it to your home screen in 10 seconds</h2>
   <div class="grid">
-    <div class="feature"><b>Android (Chrome)</b><p>Open yaarimeet.com → tap the ⋮ menu → <b>Add to Home screen</b>.</p></div>
-    <div class="feature"><b>iPhone (Safari)</b><p>Open yaarimeet.com → tap <b>Share</b> → <b>Add to Home Screen</b>.</p></div>
+    <div class="box"><h3>Android (Chrome)</h3><p>Open yaarimeet.com → tap the ⋮ menu → <b>Add to Home screen</b>.</p></div>
+    <div class="box"><h3>iPhone (Safari)</h3><p>Open yaarimeet.com → tap <b>Share</b> → <b>Add to Home Screen</b>.</p></div>
   </div>
 </section>
 
@@ -346,7 +354,8 @@ export const pages = [
       ["क्या यह सुरक्षित है?", "हर चैट में रिपोर्ट बटन है और गलत व्यवहार करने वालों को बैन किया जाता है। वीडियो कभी रिकॉर्ड नहीं होता। केवल 18+ के लिए।"],
     ],
     body: `
-<section class="hero">
+<section class="hero small-hero">
+  <span class="kicker">फ्री · वीडियो और टेक्स्ट</span>
   <h1>अजनबियों से रैंडम वीडियो चैट</h1>
   <p class="lead">YaariMeet पर पूरे भारत के नए लोगों से कुछ ही सेकंड में आमने-सामने बात करें। फ्री वीडियो चैट और टेक्स्ट चैट — बिना डाउनलोड के।</p>
   <a class="btn primary big" href="/chat/">🎥 वीडियो चैट शुरू करें</a>
@@ -364,11 +373,11 @@ export const pages = [
 
 <section>
   <h2>YaariMeet क्यों?</h2>
-  <div class="grid">
-    <div class="feature"><b>🎲 फ्री रैंडम चैट</b><p>पूरे भारत के अजनबियों से बिना किसी खर्च के बात करें।</p></div>
-    <div class="feature"><b>✔ वेरिफाइड प्रोफाइल</b><p>3 सेकंड के सेल्फ़ी वीडियो से वेरिफाई करें। वेरिफाइड लोगों को पहले मैच मिलता है।</p></div>
-    <div class="feature"><b>👧👦 जेंडर फ़िल्टर</b><p>सिर्फ़ लड़कियों या सिर्फ़ लड़कों से बात करें — 20 क्रेडिट प्रति मिनट।</p></div>
-    <div class="feature"><b>💸 UPI से पेमेंट</b><p>₹25 में 100 क्रेडिट। Google Pay, PhonePe या Paytm से भुगतान करें।</p></div>
+  <div class="features">
+    <div><h3>फ्री रैंडम चैट</h3><p>पूरे भारत के अजनबियों से बिना किसी खर्च के बात करें।</p></div>
+    <div><h3>वेरिफाइड प्रोफाइल</h3><p>3 सेकंड के सेल्फ़ी वीडियो से वेरिफाई करें। वेरिफाइड लोगों को पहले मैच मिलता है।</p></div>
+    <div><h3>जेंडर फ़िल्टर</h3><p>सिर्फ़ लड़कियों या सिर्फ़ लड़कों से बात करें — 20 क्रेडिट प्रति मिनट।</p></div>
+    <div><h3>UPI से पेमेंट</h3><p>₹25 में 100 क्रेडिट। Google Pay, PhonePe या Paytm से भुगतान करें।</p></div>
   </div>
 </section>`,
   },
@@ -394,8 +403,8 @@ export const pages = [
 
 <section>
   <div class="grid">
-    <div class="feature price-card"><b>Random</b><p class="price">Free</p><p>Unlimited random video and text chat with anyone.</p></div>
-    <div class="feature price-card"><b>Only girls / Only boys</b><p class="price">20 credits<span>/min</span></p><p>Match only with the gender you choose. Verified people first.</p></div>
+    <div class="box"><h3>Random</h3><p class="price">Free</p><p>Unlimited random video and text chat with anyone.</p></div>
+    <div class="box"><h3>Only girls / Only boys</h3><p class="price">20 credits<span>/min</span></p><p>Match only with the gender you choose. Verified people first.</p></div>
   </div>
 </section>
 
