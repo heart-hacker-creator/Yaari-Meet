@@ -1,0 +1,14 @@
+{
+  "name": "yaarimeet",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node site/build.mjs",
+    "dev": "node site/build.mjs && wrangler dev",
+    "deploy": "node site/build.mjs && wrangler deploy",
+    "test": "node test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

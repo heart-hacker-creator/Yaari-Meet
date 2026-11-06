@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YaariMeet Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0e1020">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="YM Admin">
+  <link rel="manifest" href="/admin/manifest.webmanifest">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<section id="signin" class="screen center" hidden>
+  <p class="logo">Yaari<span>Meet</span> Admin</p>
+  <button id="google" class="primary big">Sign in with Google</button>
+  <p id="denied" class="small" style="color:var(--danger)" hidden>This Google account is not an admin.</p>
+</section>
+
+<section id="app" hidden>
+  <header class="topbar">
+    <span class="logo">Yaari<span>Meet</span> Admin</span>
+    <span class="grow"></span>
+    <button id="notify" class="small">🔔 Enable alerts</button>
+    <button id="signout" class="small">Sign out</button>
+  </header>
+  <nav class="tabs">
+    <button data-tab="payments" class="active">Payments <span class="count" id="nPayments" hidden></span></button>
+    <button data-tab="verifications">Verifications <span class="count" id="nVerifications" hidden></span></button>
+    <button data-tab="reports">Reports <span class="count" id="nReports" hidden></span></button>
+    <button data-tab="users">Users</button>
+  </nav>
+  <main class="wrap">
+    <div class="stats">
+      <div class="stat"><span class="small muted">Online now</span><b id="sOnline">–</b></div>
+      <div class="stat"><span class="small muted">Total users</span><b id="sUsers">–</b></div>
+      <div class="stat"><span class="small muted">Revenue today</span><b id="sToday">–</b></div>
+      <div class="stat"><span class="small muted">Revenue all time</span><b id="sAll">–</b></div>
+    </div>
+
+    <section data-panel="payments">
+      <div class="row" style="margin-bottom:10px">
+        <label class="row small"><input type="checkbox" id="showHistory"> Show approved / rejected</label>
+      </div>
+      <div id="payments"></div>
+    </section>
+    <section data-panel="verifications" hidden><div id="verifications"></div></section>
+    <section data-panel="reports" hidden><div id="reports"></div></section>
+    <section data-panel="users" hidden>
+      <input id="search" type="search" placeholder="Search name or email…" style="width:100%;margin-bottom:12px">
+      <div id="users"></div>
+    </section>
+  </main>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+<script type="module" src="/admin/admin.js"></script>
+</body>
+</html>

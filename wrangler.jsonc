@@ -1,0 +1,22 @@
+{
+  "name": "yaarimeet",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-10-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/ws", "/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "LOBBY", "class_name": "Lobby" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Lobby"] }],
+  "vars": {
+    // Filled in during setup. Secrets (SUPABASE_SECRET_KEY, VAPID_PRIVATE_JWK)
+    // are set with `npx wrangler secret put`, never written here.
+    "SUPABASE_URL": "https://YOUR-PROJECT.supabase.co",
+    "VAPID_PUBLIC_KEY": ""
+  },
+  "observability": { "enabled": true }
+}
