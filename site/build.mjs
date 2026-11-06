@@ -116,6 +116,12 @@ ${faq}
   </div>
   <p class="copy">© ${new Date().getFullYear()} ${NAME} · For adults 18+ only · Made in India</p>
 </footer>
+<aside id="promo" class="promo" hidden>
+  <button class="promo-x" aria-label="Close" onclick="this.parentElement.hidden = true">×</button>
+  <b>👧 Girls-only video chat</b>
+  <span>Verified girls first · ₹25 = 100 credits</span>
+  <a class="btn primary" href="/chat/?buy=1">Get credits</a>
+</aside>
 <script>
   // Once per browser session: tells the server about the visit and gets the banner text.
   (() => {
@@ -133,6 +139,13 @@ ${faq}
       })
       .catch(() => {});
   })();
+
+  // Credits promo: a small card, once per visit, after 8 seconds.
+  // (Not a full-screen pop-up: those lower Google ranking on mobile.)
+  setTimeout(() => {
+    try { if (sessionStorage.ymPromo) return; sessionStorage.ymPromo = 1; } catch {}
+    document.getElementById("promo").hidden = false;
+  }, 8000);
 </script>
 </body>
 </html>

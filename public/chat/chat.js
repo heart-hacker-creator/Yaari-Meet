@@ -133,6 +133,19 @@ async function boot() {
   await renderLobby();
   show("lobby");
   pingVisit();
+  // Arrived from a "Get credits" link: open the payment page straight away.
+  if (new URLSearchParams(location.search).has("buy")) {
+    history.replaceState(null, "", location.pathname);
+    openBuy();
+  } else if (profile.credits < MINUTE_COST) {
+    // Credits promo once per visit for users who can't use the premium filters yet.
+    let seen = false;
+    try {
+      seen = !!sessionStorage.ymLobbyPromo;
+      sessionStorage.ymLobbyPromo = 1;
+    } catch {}
+    if (!seen) setTimeout(() => !$("lobby").hidden && document.querySelector("[data-premium=female]").click(), 3000);
+  }
   setInterval(poll, 15000);
 }
 
@@ -406,7 +419,7 @@ document.addEventListener("click", (e) => {
 });
 
 $("google").onclick = () =>
-  supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${location.origin}/chat/` } });
+  supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${location.origin}/chat/${location.search}` } });
 
 $("signout").onclick = async () => {
   await supabase.auth.signOut();
