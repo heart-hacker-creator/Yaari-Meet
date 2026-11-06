@@ -8,7 +8,8 @@ const REASONS = new Set(["abuse", "wrong_gender"]);
 // ---------- Database access ----------
 
 function supabase(env) {
-  const key = env.SUPABASE_SECRET_KEY;
+  const key = env.SUPABASE_SECRET_KEY ?? "";
+  if (!key) console.error("SUPABASE_SECRET_KEY is not set: run `npx wrangler secret put SUPABASE_SECRET_KEY`");
   const auth = { apikey: key };
   // New "sb_secret_" keys go in apikey only; legacy service_role JWTs also as Bearer.
   if (!key.startsWith("sb_")) auth.Authorization = `Bearer ${key}`;

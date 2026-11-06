@@ -1,0 +1,10 @@
+// Cloudflare Pages project: serves the website at yaarimeet.pages.dev.
+// /ws and /api/* are passed to the "yaarimeet" Worker (chat server) over a
+// private service binding, so the Worker needs no public address of its own.
+// Deploy from this folder: npx wrangler pages deploy
+{
+  "name": "yaarimeet",
+  "pages_build_output_dir": "../public",
+  "compatibility_date": "2025-10-01",
+  "services": [{ "binding": "API", "service": "yaarimeet" }]
+}

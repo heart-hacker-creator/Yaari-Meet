@@ -1,6 +1,10 @@
 {
   "name": "yaarimeet",
   "main": "src/worker.js",
+  // No public workers.dev address: the site at yaarimeet.pages.dev reaches
+  // this Worker through a service binding (see pages/wrangler.jsonc).
+  "workers_dev": false,
+  "preview_urls": false,
   "compatibility_date": "2025-10-01",
   "assets": {
     "directory": "./public",

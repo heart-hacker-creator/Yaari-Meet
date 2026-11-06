@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://yaarimeet.com/sitemap.xml
+Sitemap: https://yaarimeet.pages.dev/sitemap.xml

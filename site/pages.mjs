@@ -1,6 +1,7 @@
 // All public page content. Each page targets its own search phrases so they
 // don't compete with each other. Keep claims true: Google punishes fake numbers.
-export const SITE = "https://yaarimeet.com";
+export const SITE = "https://yaarimeet.pages.dev";
+const HOST = new URL(SITE).host;
 export const NAME = "YaariMeet";
 const CONTACT = "contact@yaarimeet.com";
 
@@ -317,8 +318,8 @@ export const pages = [
 <section>
   <h2>Add it to your home screen in 10 seconds</h2>
   <div class="grid">
-    <div class="box"><h3>Android (Chrome)</h3><p>Open yaarimeet.com → tap the ⋮ menu → <b>Add to Home screen</b>.</p></div>
-    <div class="box"><h3>iPhone (Safari)</h3><p>Open yaarimeet.com → tap <b>Share</b> → <b>Add to Home Screen</b>.</p></div>
+    <div class="box"><h3>Android (Chrome)</h3><p>Open ${HOST} → tap the ⋮ menu → <b>Add to Home screen</b>.</p></div>
+    <div class="box"><h3>iPhone (Safari)</h3><p>Open ${HOST} → tap <b>Share</b> → <b>Add to Home Screen</b>.</p></div>
   </div>
 </section>
 

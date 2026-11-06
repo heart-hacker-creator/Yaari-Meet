@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node site/build.mjs",
     "dev": "node site/build.mjs && wrangler dev",
-    "deploy": "node site/build.mjs && wrangler deploy",
+    "deploy": "node site/build.mjs && wrangler deploy && cd pages && wrangler pages deploy --branch main",
     "test": "node test.mjs"
   },
   "devDependencies": {
