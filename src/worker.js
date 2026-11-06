@@ -20,7 +20,8 @@ function supabase(env) {
       headers: { ...auth, "Content-Type": "application/json", ...init.headers },
     });
     const text = await res.text();
-    if (!res.ok) throw new Error(`${res.status} ${text}`);
+    // Key prefix only (never the key) so a wrong key type is easy to spot in logs.
+    if (!res.ok) throw new Error(`${res.status} [key ${key.slice(0, 10)}…] ${text}`);
     return text ? JSON.parse(text) : null;
   };
 
