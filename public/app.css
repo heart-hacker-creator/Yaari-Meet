@@ -93,6 +93,25 @@ label { display: block; }
 }
 .start-bar { margin-top: 24px; }
 
+/* Dashboard tiles */
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+  padding: 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--card);
+  box-shadow: 4px 4px 0 var(--ink); width: 100%;
+}
+.tile-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+.tile-btn .ic { font-size: 1.8rem; line-height: 1; margin-bottom: 8px; }
+.tile-btn b { font-family: var(--display); font-size: 1.15rem; }
+.tile-btn small { color: var(--ink-2); font-weight: 400; font-size: .85rem; }
+.tile-btn.hot { background: var(--accent); color: #fff; }
+.tile-btn.hot small { color: #ffe4d6; }
+.tile-btn.wide { flex-direction: row; align-items: center; gap: 14px; }
+.tile-btn.wide .ic { margin: 0; }
+.tile-btn.wide b, .tile-btn.wide small { display: block; }
+.tile-btn.premium { background: linear-gradient(120deg, #fff 40%, var(--accent-soft)); }
+.tile-btn .tag { font-size: .7rem; font-weight: 800; letter-spacing: .08em; background: var(--ink); color: var(--paper); border-radius: 4px; padding: 3px 7px; }
+
 /* Option lists */
 .choices { display: grid; gap: 8px; }
 .choice {

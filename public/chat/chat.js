@@ -80,10 +80,6 @@ async function renderLobby() {
   $("verifyBtn").textContent = checks?.length ? "Verification in review" : "Get verified";
 
   const forced = profile.forced_filter;
-  document.querySelectorAll("input[name=filter]").forEach((input) => {
-    input.disabled = !!forced && input.value !== forced;
-    if (forced) input.checked = input.value === forced;
-  });
   $("forcedNote").hidden = !forced;
   $("forcedNote").textContent = forced
     ? `Your account is set to ${forced === "female" ? "Only girls" : "Only boys"} (20 credits per minute). With no credits you'll be matched on Random.`
@@ -227,7 +223,6 @@ async function handle(msg) {
       break;
     case "out-of-credits":
       filter = "any";
-      document.querySelector("input[name=filter][value=any]").checked = true;
       toast("Out of credits — switched to Random. Add credits to use Only girls / Only boys.");
       break;
     case "peer-left":
@@ -255,14 +250,9 @@ function next() {
   send({ type: "find", mode, filter });
 }
 
-async function start() {
-  mode = radio("mode");
-  filter = radio("filter");
-  if (filter !== "any" && profile.credits < MINUTE_COST) {
-    openBuy();
-    toast(`You need at least ${MINUTE_COST} credits for this filter. Or choose Random — it's free.`);
-    return;
-  }
+async function start(m, f) {
+  mode = m;
+  filter = f;
   if (mode === "video") {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -431,7 +421,39 @@ $("onboardForm").onsubmit = async (e) => {
   boot();
 };
 
-$("start").onclick = start;
+// Dashboard: free tiles start right away; premium tiles open the pop-up first.
+document.querySelectorAll("[data-start]").forEach((btn) => {
+  btn.onclick = () => start(btn.dataset.start, btn.dataset.filter);
+});
+
+let premiumFilter = "female";
+document.querySelectorAll("[data-premium]").forEach((btn) => {
+  btn.onclick = () => {
+    premiumFilter = btn.dataset.premium;
+    const girls = premiumFilter === "female";
+    const enough = profile.credits >= MINUTE_COST;
+    $("premIcon").textContent = girls ? "👧" : "👦";
+    $("premTitle").textContent = girls ? "Girls only" : "Boys only";
+    $("premWho").textContent = girls ? "girls" : "boys";
+    $("premBalance").textContent = enough
+      ? `You have ${profile.credits} credits — about ${Math.floor(profile.credits / MINUTE_COST)} minutes.`
+      : `You have ${profile.credits} credits. Add credits to start (₹25 = 100 credits = 5 minutes).`;
+    $("premStart").hidden = !enough;
+    $("premBuy").textContent = enough ? "Add more credits" : "Get credits";
+    $("premBuy").className = enough ? "ghost big" : "primary big";
+    $("premium").showModal();
+  };
+});
+$("premBuy").onclick = () => {
+  $("premium").close();
+  openBuy();
+};
+document.querySelectorAll("[data-go]").forEach((btn) => {
+  btn.onclick = () => {
+    $("premium").close();
+    start(btn.dataset.go, premiumFilter);
+  };
+});
 $("next").onclick = next;
 $("stop").onclick = stop;
 $("reportBtn").onclick = () => paired && $("report").showModal();

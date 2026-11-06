@@ -77,27 +77,31 @@
     </div>
     <p id="paymentNote" class="note" hidden></p>
 
-    <p class="label" style="margin-top:24px">Who do you want to meet?</p>
-    <div class="choices">
-      <label class="choice"><input type="radio" name="filter" value="any" checked>
-        <span><b>Anyone</b><small>Random match with a boy or a girl</small></span><span class="price free">FREE</span></label>
-      <label class="choice"><input type="radio" name="filter" value="female">
-        <span><b>Only girls</b><small>Verified girls first</small></span><span class="price">20 / min</span></label>
-      <label class="choice"><input type="radio" name="filter" value="male">
-        <span><b>Only boys</b><small>Verified boys first</small></span><span class="price">20 / min</span></label>
-    </div>
     <p id="forcedNote" class="note" hidden></p>
 
-    <p class="label" style="margin-top:24px">Chat type</p>
-    <div class="seg">
-      <label class="choice"><input type="radio" name="mode" value="video" checked> <b>Video</b></label>
-      <label class="choice"><input type="radio" name="mode" value="text"> <b>Text only</b></label>
+    <p class="label" style="margin-top:24px">Free · meet anyone</p>
+    <div class="tiles">
+      <button class="tile-btn hot" data-start="video" data-filter="any">
+        <span class="ic">🎥</span><b>Video chat</b><small>Random boy or girl</small>
+      </button>
+      <button class="tile-btn" data-start="text" data-filter="any">
+        <span class="ic">💬</span><b>Text chat</b><small>No camera needed</small>
+      </button>
     </div>
 
-    <div class="start-bar">
-      <button id="start" class="primary big">Start chatting</button>
-    </div>
-    <p class="center"><button id="signout" class="ghost small muted">Sign out</button></p>
+    <p class="label" style="margin-top:24px">Premium · choose who you meet</p>
+    <button class="tile-btn wide premium" data-premium="female">
+      <span class="ic">👧</span>
+      <span class="grow"><b>Girls only video chat</b><small>Verified girls first · 20 credits/min</small></span>
+      <span class="tag">PREMIUM</span>
+    </button>
+    <button class="tile-btn wide" data-premium="male" style="margin-top:8px">
+      <span class="ic">👦</span>
+      <span class="grow"><b>Boys only</b><small>Verified boys first · 20 credits/min</small></span>
+      <span class="tag">PREMIUM</span>
+    </button>
+
+    <p class="center" style="margin-top:28px"><button id="signout" class="ghost small muted">Sign out</button></p>
   </div>
 </section>
 
@@ -181,6 +185,20 @@
     <p class="muted">We'll check it soon. Your badge appears automatically once approved.</p>
     <button class="primary big" data-close>OK</button>
   </div>
+</dialog>
+
+<!-- Premium filter pop-up -->
+<dialog id="premium">
+  <p style="font-size:2.4rem;margin:0" id="premIcon">👧</p>
+  <h2 id="premTitle">Girls only</h2>
+  <p class="muted" style="margin:0 0 6px">Get matched only with <b id="premWho">girls</b> — verified first. <b>20 credits per minute</b>, charged only while you're connected.</p>
+  <p class="note" id="premBalance"></p>
+  <div id="premStart" class="seg" style="margin-top:14px">
+    <button class="primary" data-go="video">🎥 Video</button>
+    <button data-go="text">💬 Text</button>
+  </div>
+  <button id="premBuy" class="primary big" style="margin-top:14px">Get credits</button>
+  <button class="ghost big" data-close style="margin-top:6px">Not now</button>
 </dialog>
 
 <!-- Report -->
