@@ -26,6 +26,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"YaariMeet","item":"https://yaarimeet.pages.dev/"},{"@type":"ListItem","position":2,"name":"Talk to strangers","item":"https://yaarimeet.pages.dev/talk-to-strangers/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How can I talk to strangers online for free?","acceptedAnswer":{"@type":"Answer","text":"On YaariMeet, sign in with Google, choose Random, and press Start. You'll be connected to a random stranger right away, for free."}},{"@type":"Question","name":"Can I talk to strangers without video?","acceptedAnswer":{"@type":"Answer","text":"Yes. Choose Text chat before starting and you'll only exchange messages — no camera needed."}},{"@type":"Question","name":"What should I say to a stranger?","acceptedAnswer":{"@type":"Answer","text":"Start simple: say hi, ask where they're from, or ask about what's around them. Some easy icebreakers are listed on this page."}}]}]}</script>
 </head>
 <body>
+<div id="banner" class="banner" hidden></div>
 <header class="nav">
   <a class="logo" href="/">Yaari<span>Meet</span></a>
   <nav><a href="/omegle-alternative/">Omegle alternative</a><a href="/pricing/">Pricing</a><a href="/safety/">Safety</a></nav>
@@ -128,5 +129,23 @@
   </div>
   <p class="copy">© 2026 YaariMeet · For adults 18+ only · Made in India</p>
 </footer>
+<script>
+  // Once per browser session: tells the server about the visit and gets the banner text.
+  (() => {
+    let first = true;
+    try { first = !sessionStorage.ymVisit; sessionStorage.ymVisit = 1; } catch {}
+    fetch("/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ first, path: location.pathname, referrer: document.referrer }),
+    })
+      .then((r) => r.json())
+      .then(({ banner }) => {
+        const el = document.getElementById("banner");
+        if (banner) { el.textContent = banner; el.hidden = false; }
+      })
+      .catch(() => {});
+  })();
+</script>
 </body>
 </html>

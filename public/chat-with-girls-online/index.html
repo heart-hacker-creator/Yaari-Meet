@@ -26,6 +26,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"YaariMeet","item":"https://yaarimeet.pages.dev/"},{"@type":"ListItem","position":2,"name":"Chat with girls online","item":"https://yaarimeet.pages.dev/chat-with-girls-online/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I chat only with girls?","acceptedAnswer":{"@type":"Answer","text":"Choose Only girls in the lobby before you start. The filter costs 20 credits per minute (₹25 = 100 credits). Random chat stays free."}},{"@type":"Question","name":"Are the girls real?","acceptedAnswer":{"@type":"Answer","text":"Everyone signs in with Google and chooses their gender once. Girls can verify with a 3-second selfie video, and verified girls are matched first. Fake genders can be reported and get banned."}},{"@type":"Question","name":"What if no girl is online?","acceptedAnswer":{"@type":"Answer","text":"You'll wait in the queue until one is free — you're only charged once you're actually connected."}},{"@type":"Question","name":"Is it safe for girls?","acceptedAnswer":{"@type":"Answer","text":"Yes. Girls can report anyone in one tap, and our team bans users who are rude or abusive. Video is never recorded."}}]}]}</script>
 </head>
 <body>
+<div id="banner" class="banner" hidden></div>
 <header class="nav">
   <a class="logo" href="/">Yaari<span>Meet</span></a>
   <nav><a href="/omegle-alternative/">Omegle alternative</a><a href="/pricing/">Pricing</a><a href="/safety/">Safety</a></nav>
@@ -101,5 +102,23 @@
   </div>
   <p class="copy">© 2026 YaariMeet · For adults 18+ only · Made in India</p>
 </footer>
+<script>
+  // Once per browser session: tells the server about the visit and gets the banner text.
+  (() => {
+    let first = true;
+    try { first = !sessionStorage.ymVisit; sessionStorage.ymVisit = 1; } catch {}
+    fetch("/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ first, path: location.pathname, referrer: document.referrer }),
+    })
+      .then((r) => r.json())
+      .then(({ banner }) => {
+        const el = document.getElementById("banner");
+        if (banner) { el.textContent = banner; el.hidden = false; }
+      })
+      .catch(() => {});
+  })();
+</script>
 </body>
 </html>

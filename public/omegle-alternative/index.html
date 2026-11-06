@@ -26,6 +26,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"YaariMeet","item":"https://yaarimeet.pages.dev/"},{"@type":"ListItem","position":2,"name":"Omegle alternative","item":"https://yaarimeet.pages.dev/omegle-alternative/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why did Omegle shut down?","acceptedAnswer":{"@type":"Answer","text":"Omegle's founder closed the site in November 2023, saying the cost and difficulty of fighting misuse had become too high to continue."}},{"@type":"Question","name":"Is YaariMeet like Omegle?","acceptedAnswer":{"@type":"Answer","text":"Yes — you are matched with a random stranger for a video or text chat and can press Next at any time. Unlike Omegle, everyone signs in, can verify themselves, and can report abuse in one tap."}},{"@type":"Question","name":"Is this Omegle alternative free?","acceptedAnswer":{"@type":"Answer","text":"Random chat is completely free. Gender filters are optional and cost 20 credits per minute."}}]}]}</script>
 </head>
 <body>
+<div id="banner" class="banner" hidden></div>
 <header class="nav">
   <a class="logo" href="/">Yaari<span>Meet</span></a>
   <nav><a href="/omegle-alternative/">Omegle alternative</a><a href="/pricing/">Pricing</a><a href="/safety/">Safety</a></nav>
@@ -108,5 +109,23 @@
   </div>
   <p class="copy">© 2026 YaariMeet · For adults 18+ only · Made in India</p>
 </footer>
+<script>
+  // Once per browser session: tells the server about the visit and gets the banner text.
+  (() => {
+    let first = true;
+    try { first = !sessionStorage.ymVisit; sessionStorage.ymVisit = 1; } catch {}
+    fetch("/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ first, path: location.pathname, referrer: document.referrer }),
+    })
+      .then((r) => r.json())
+      .then(({ banner }) => {
+        const el = document.getElementById("banner");
+        if (banner) { el.textContent = banner; el.hidden = false; }
+      })
+      .catch(() => {});
+  })();
+</script>
 </body>
 </html>

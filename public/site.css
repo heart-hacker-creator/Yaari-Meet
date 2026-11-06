@@ -165,3 +165,4 @@ footer .copy { max-width: 70rem; margin: 28px auto 0; color: var(--ink-2); font-
   main > section { padding: 40px 0; }
   .cta-band { padding: 32px 22px !important; }
 }
+.banner { background: var(--ink); color: var(--paper); text-align: center; padding: 10px 16px; font-weight: 600; font-size: .95rem; }

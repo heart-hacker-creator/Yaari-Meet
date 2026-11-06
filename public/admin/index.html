@@ -34,10 +34,13 @@
     <button data-tab="verifications">Verifications <span class="count" id="nVerifications" hidden></span></button>
     <button data-tab="reports">Reports <span class="count" id="nReports" hidden></span></button>
     <button data-tab="users">Users</button>
+    <button data-tab="visitors">Visitors</button>
+    <button data-tab="settings">Banner &amp; alerts</button>
   </nav>
   <main class="wrap">
     <div class="stats">
       <div class="stat"><span class="small muted">Online now</span><b id="sOnline">–</b></div>
+      <div class="stat"><span class="small muted">Visitors today</span><b id="sVisits">–</b></div>
       <div class="stat"><span class="small muted">Total users</span><b id="sUsers">–</b></div>
       <div class="stat"><span class="small muted">Revenue today</span><b id="sToday">–</b></div>
       <div class="stat"><span class="small muted">Revenue all time</span><b id="sAll">–</b></div>
@@ -54,6 +57,22 @@
     <section data-panel="users" hidden>
       <input id="search" type="search" placeholder="Search name or email…" style="width:100%;margin-bottom:12px">
       <div id="users"></div>
+    </section>
+    <section data-panel="visitors" hidden><div id="visitors"></div></section>
+    <section data-panel="settings" hidden>
+      <div class="card">
+        <h2>Banner on the main screen</h2>
+        <p class="small muted">Shown at the top of the website and in the chat lobby.</p>
+        <textarea id="bannerText" maxlength="300" rows="3" style="width:100%;font:inherit;padding:10px;border:2px solid var(--line);border-radius:8px"></textarea>
+        <label class="row small" style="margin:10px 0"><input type="checkbox" id="bannerOn"> Show the banner</label>
+      </div>
+      <div class="card">
+        <h2>Phone alerts</h2>
+        <label class="row small"><input type="checkbox" id="alertSignups"> New sign-up (name and gender)</label>
+        <label class="row small" style="margin-top:8px"><input type="checkbox" id="alertVisits"> Every visit (city, device, page)</label>
+        <p class="small muted">Payments and verification videos always alert. Tap "Enable alerts" at the top on each phone.</p>
+      </div>
+      <button id="saveSettings" class="primary big">Save</button>
     </section>
   </main>
 </section>

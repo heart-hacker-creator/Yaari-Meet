@@ -33,14 +33,16 @@ function badge(id, n) {
 
 async function loadStats() {
   const { data: auth } = await supabase.auth.getSession();
-  const [stats, users, approved] = await Promise.all([
+  const [stats, users, approved, visits] = await Promise.all([
     fetch("/api/stats", { headers: { Authorization: `Bearer ${auth.session?.access_token}` } })
       .then((r) => r.json())
       .catch(() => null),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     // ponytail: sums in the browser; move to a SQL view once there are many thousands of payments.
     supabase.from("payment_requests").select("amount,reviewed_at").eq("status", "approved"),
+    supabase.from("visits").select("id", { count: "exact", head: true }).gte("created_at", startOfToday()),
   ]);
+  $("sVisits").textContent = visits.count ?? "–";
   const today = new Date().toDateString();
   const rows = approved.data ?? [];
   $("sOnline").textContent = stats?.online ?? "–";
@@ -213,6 +215,52 @@ async function userAction(btn) {
   loadUsers();
 }
 
+// ---------- Visitors ----------
+
+const startOfToday = () => new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+
+async function loadVisitors() {
+  const { data = [] } = await supabase
+    .from("visits")
+    .select("*, profiles(name,gender)")
+    .order("created_at", { ascending: false })
+    .limit(100);
+  $("visitors").innerHTML =
+    data
+      .map(
+        (v) => `<div class="item small">
+        <b>${v.profiles ? `${esc(v.profiles.name)} · ${GENDER[v.profiles.gender] ?? ""}` : "Visitor"}</b>
+        · ${esc([v.city, v.region, v.country].filter(Boolean).join(", ") || "Unknown place")} · ${esc(v.device)}
+        <div class="muted">${esc(v.path)}${v.referrer ? ` · from ${esc(v.referrer)}` : ""} · ${when(v.created_at)}</div>
+      </div>`,
+      )
+      .join("") || '<p class="muted center">No visits yet.</p>';
+}
+
+// ---------- Banner & alert settings ----------
+
+async function loadSettings() {
+  const { data } = await supabase.from("site_settings").select("*").eq("id", 1).single();
+  if (!data) return;
+  $("bannerText").value = data.banner_text;
+  $("bannerOn").checked = data.banner_on;
+  $("alertSignups").checked = data.alert_signups;
+  $("alertVisits").checked = data.alert_visits;
+}
+
+async function saveSettings() {
+  const { error } = await supabase
+    .from("site_settings")
+    .update({
+      banner_text: $("bannerText").value.trim(),
+      banner_on: $("bannerOn").checked,
+      alert_signups: $("alertSignups").checked,
+      alert_visits: $("alertVisits").checked,
+    })
+    .eq("id", 1);
+  toast(error ? error.message : "Saved. Visitors see the new banner on their next visit.");
+}
+
 // ---------- Push alerts ----------
 
 async function enableAlerts() {
@@ -223,7 +271,10 @@ async function enableAlerts() {
   const reg = await navigator.serviceWorker.register("/admin/sw.js", { scope: "/admin/" });
   await navigator.serviceWorker.ready;
   const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
-  const { error } = await supabase.from("admin_push_subscriptions").upsert({ endpoint: sub.endpoint });
+  const { keys } = sub.toJSON();
+  const { error } = await supabase
+    .from("admin_push_subscriptions")
+    .upsert({ endpoint: sub.endpoint, p256dh: keys.p256dh, auth: keys.auth });
   if (error) return toast(error.message);
   $("notify").textContent = "🔔 Alerts on";
   toast("Alerts enabled on this device.");
@@ -234,7 +285,7 @@ async function enableAlerts() {
 function openTab(name) {
   document.querySelectorAll("[data-tab]").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll("[data-panel]").forEach((p) => (p.hidden = p.dataset.panel !== name));
-  ({ payments: loadPayments, verifications: loadVerifications, reports: loadReports, users: loadUsers })[name]();
+  ({ payments: loadPayments, verifications: loadVerifications, reports: loadReports, users: loadUsers, visitors: loadVisitors, settings: loadSettings })[name]();
 }
 
 document.addEventListener("click", async (e) => {
@@ -277,6 +328,7 @@ $("search").oninput = () => {
 };
 $("showHistory").onchange = loadPayments;
 $("notify").onclick = enableAlerts;
+$("saveSettings").onclick = saveSettings;
 $("google").onclick = () =>
   supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${location.origin}/admin/` } });
 $("signout").onclick = async () => {
@@ -306,6 +358,8 @@ async function boot() {
   $("app").hidden = false;
   if (window.Notification?.permission === "granted") $("notify").textContent = "🔔 Alerts on";
   refreshAll();
+  // Alerts open the matching tab, e.g. /admin/#payments
+  if (location.hash) openTab(location.hash.slice(1));
   setInterval(refreshAll, 20000);
   document.addEventListener("visibilitychange", refreshAll);
 }

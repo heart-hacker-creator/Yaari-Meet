@@ -33,17 +33,19 @@ function supabase(env) {
       return res.ok ? (await res.json()).id : null;
     },
     async profile(id) {
-      const rows = await rest(`profiles?id=eq.${id}&select=name,gender,credits,forced_filter,verified,banned,is_admin`);
+      const rows = await rest(
+        `profiles?id=eq.${id}&select=name,gender,credits,forced_filter,verified,banned,is_admin,created_at`,
+      );
       return rows[0] ?? null;
     },
+    settings: async () => (await rest("site_settings?id=eq.1&select=*"))[0] ?? null,
     spend: (id, amount) =>
       rest("rpc/spend_credits", { method: "POST", body: JSON.stringify({ p_user: id, p_amount: amount }) }),
     insert: (table, row) =>
       rest(table, { method: "POST", body: JSON.stringify(row), headers: { Prefer: "return=minimal" } }),
     pendingPayments: async (id) =>
       (await rest(`payment_requests?user_id=eq.${id}&status=eq.pending&select=id`)).length,
-    adminEndpoints: async () =>
-      (await rest("admin_push_subscriptions?select=endpoint")).map((r) => r.endpoint),
+    adminSubs: () => rest("admin_push_subscriptions?select=endpoint,p256dh,auth"),
     deleteEndpoint: (endpoint) =>
       rest(`admin_push_subscriptions?endpoint=eq.${encodeURIComponent(endpoint)}`, { method: "DELETE" }),
   };
@@ -74,7 +76,10 @@ function fakeDb() {
     async pendingPayments() {
       return 0;
     },
-    async adminEndpoints() {
+    async settings() {
+      return { banner_on: true, banner_text: "Dev banner", alert_visits: false, alert_signups: false };
+    },
+    async adminSubs() {
       return [];
     },
     async deleteEndpoint() {},
@@ -302,6 +307,7 @@ async function submit(request, env, ctx, kind) {
   if (!uid) return json({ error: "Please sign in again." }, 401);
   const body = await request.json().catch(() => ({}));
 
+  let alert;
   try {
     if (kind === "payment") {
       const amount = Number(body.amount);
@@ -310,10 +316,12 @@ async function submit(request, env, ctx, kind) {
       if (!/^[0-9A-Za-z]{6,30}$/.test(utr)) return json({ error: "Enter the UPI transaction ID (UTR) from your payment app." }, 400);
       if ((await db.pendingPayments(uid)) >= 3) return json({ error: "You already have 3 payments waiting. Please wait for them to be confirmed." }, 429);
       await db.insert("payment_requests", { user_id: uid, amount, utr });
+      alert = { title: `💰 ₹${amount} payment to confirm`, body: `UTR ${utr}`, tag: "payment" };
     } else {
       const path = String(body.path ?? "");
       if (!path.startsWith(`${uid}/`)) return json({ error: "Invalid upload." }, 400);
       await db.insert("verifications", { user_id: uid, video_path: path, gesture: String(body.gesture ?? "").slice(0, 80) });
+      alert = { title: "🎥 New verification video", body: "Waiting for your review", tag: "verification" };
     }
   } catch (e) {
     if (String(e).includes("23505")) return json({ error: "This transaction ID was already submitted." }, 409);
@@ -321,7 +329,78 @@ async function submit(request, env, ctx, kind) {
     return json({ error: "Something went wrong. Please try again." }, 500);
   }
 
-  ctx.waitUntil(notifyAdmins(env, db).catch(console.error));
+  ctx.waitUntil(
+    db
+      .profile(uid)
+      .then((p) => notifyAdmins(env, db, { ...alert, body: `${p?.name ?? "Someone"} · ${alert.body}` }))
+      .catch(console.error),
+  );
+  return json({ ok: true });
+}
+
+const GENDER = { female: "Girl", male: "Boy" };
+const userFromRequest = async (db, request) => {
+  const token = (request.headers.get("Authorization") ?? "").replace(/^Bearer /, "");
+  return token ? db.user(token).catch(() => null) : null;
+};
+
+function device(ua = "") {
+  const os = /iPhone|iPad/.test(ua) ? "iPhone" : /Android/.test(ua) ? "Android" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "Mac" : "Other";
+  return /Mobi|Android|iPhone/.test(ua) ? `${os} phone` : `${os} computer`;
+}
+
+// Called by every page once per browser session: logs the visit, alerts the admin
+// if visit alerts are on, and returns the banner text to show.
+async function visit(request, env, ctx) {
+  const db = makeDb(env);
+  const body = await request.json().catch(() => ({}));
+  const settings = await db.settings().catch(() => null);
+
+  if (body.first) {
+    ctx.waitUntil(
+      (async () => {
+        const uid = await userFromRequest(db, request);
+        const profile = uid ? await db.profile(uid).catch(() => null) : null;
+        // The Pages site forwards Cloudflare's location data in these headers.
+        const h = (name, fallback) => decodeURIComponent(request.headers.get(name) ?? "") || fallback || "";
+        const cf = request.cf ?? {};
+        const row = {
+          user_id: uid,
+          path: String(body.path ?? "").slice(0, 200),
+          city: h("x-visitor-city", cf.city),
+          region: h("x-visitor-region", cf.region),
+          country: h("x-visitor-country", cf.country),
+          device: device(request.headers.get("User-Agent") ?? ""),
+          referrer: String(body.referrer ?? "").slice(0, 300),
+        };
+        await db.insert("visits", row);
+        if (!settings?.alert_visits) return;
+        const place = [row.city, row.region].filter(Boolean).join(", ") || row.country || "Unknown place";
+        await notifyAdmins(env, db, {
+          title: profile?.gender ? `🟢 ${profile.name} (${GENDER[profile.gender]}) is online` : "👀 New visitor",
+          body: `${place} · ${row.device} · ${row.path}`,
+          tag: "visit",
+        });
+      })().catch(console.error),
+    );
+  }
+  return json({ banner: settings?.banner_on ? settings.banner_text : "" });
+}
+
+// Called once after a new user finishes their profile.
+async function signup(request, env, ctx) {
+  const db = makeDb(env);
+  const uid = await userFromRequest(db, request);
+  if (!uid) return json({ error: "Please sign in again." }, 401);
+  ctx.waitUntil(
+    (async () => {
+      const [profile, settings] = await Promise.all([db.profile(uid), db.settings()]);
+      // Only brand-new accounts, so this can't be used to spam alerts.
+      if (!settings?.alert_signups || !profile?.gender) return;
+      if (Date.now() - new Date(profile.created_at).getTime() > 30 * 60 * 1000) return;
+      await notifyAdmins(env, db, { title: "🎉 New sign-up", body: `${profile.name} · ${GENDER[profile.gender]}`, tag: "signup" });
+    })().catch(console.error),
+  );
   return json({ ok: true });
 }
 
@@ -335,17 +414,68 @@ async function stats(request, env, lobby) {
   return lobby.fetch(new Request("https://lobby/stats"));
 }
 
-// Web Push without a payload: only a VAPID signature, no encryption needed.
-// The admin app's service worker shows a fixed "new request" notification.
-async function notifyAdmins(env, db) {
+// Sends { title, body, tag } to every admin device that turned alerts on.
+async function notifyAdmins(env, db, message) {
   if (!env.VAPID_PRIVATE_JWK) return;
-  for (const endpoint of await db.adminEndpoints()) {
-    const res = await fetch(endpoint, {
+  const payload = new TextEncoder().encode(JSON.stringify(message));
+  for (const sub of await db.adminSubs()) {
+    if (!sub.p256dh || !sub.auth) continue;
+    const res = await fetch(sub.endpoint, {
       method: "POST",
-      headers: { TTL: "86400", Urgency: "high", Authorization: await vapid(env, endpoint) },
+      headers: {
+        TTL: "86400",
+        Urgency: "high",
+        "Content-Encoding": "aes128gcm",
+        "Content-Type": "application/octet-stream",
+        Authorization: await vapid(env, sub.endpoint),
+      },
+      body: await encryptPush(sub, payload),
     });
-    if (res.status === 404 || res.status === 410) await db.deleteEndpoint(endpoint);
+    if (res.status === 404 || res.status === 410) await db.deleteEndpoint(sub.endpoint);
   }
+}
+
+// Web Push message encryption (RFC 8291, aes128gcm), using only WebCrypto.
+async function encryptPush(sub, plaintext, local) {
+  const enc = new TextEncoder();
+  const fromB64 = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+  const concat = (...parts) => {
+    const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+    let i = 0;
+    for (const p of parts) {
+      out.set(p, i);
+      i += p.length;
+    }
+    return out;
+  };
+  const hkdf = async (salt, ikm, info, bytes) => {
+    const key = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
+    return new Uint8Array(await crypto.subtle.deriveBits({ name: "HKDF", hash: "SHA-256", salt, info }, key, bytes * 8));
+  };
+
+  const uaPublic = fromB64(sub.p256dh);
+  const authSecret = fromB64(sub.auth);
+  local ??= await crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]);
+  const asPublic = new Uint8Array(await crypto.subtle.exportKey("raw", local.publicKey));
+  const uaKey = await crypto.subtle.importKey("raw", uaPublic, { name: "ECDH", namedCurve: "P-256" }, false, []);
+  const shared = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: uaKey }, local.privateKey, 256));
+
+  const ikm = await hkdf(authSecret, shared, concat(enc.encode("WebPush: info\0"), uaPublic, asPublic), 32);
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const cek = await hkdf(salt, ikm, enc.encode("Content-Encoding: aes128gcm\0"), 16);
+  const nonce = await hkdf(salt, ikm, enc.encode("Content-Encoding: nonce\0"), 12);
+  const aes = await crypto.subtle.importKey("raw", cek, "AES-GCM", false, ["encrypt"]);
+  const cipher = new Uint8Array(
+    await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce }, aes, concat(plaintext, new Uint8Array([2]))),
+  );
+
+  // Header: salt (16) | record size (4) | key length (1) | sender public key (65)
+  const header = new Uint8Array(21 + asPublic.length);
+  header.set(salt);
+  new DataView(header.buffer).setUint32(16, 4096);
+  header[20] = asPublic.length;
+  header.set(asPublic, 21);
+  return concat(header, cipher);
 }
 
 async function vapid(env, endpoint) {
@@ -376,6 +506,8 @@ export default {
     if (pathname === "/api/stats") return stats(request, env, lobby);
     if (request.method === "POST" && pathname === "/api/payment") return submit(request, env, ctx, "payment");
     if (request.method === "POST" && pathname === "/api/verification") return submit(request, env, ctx, "verification");
+    if (request.method === "POST" && pathname === "/api/visit") return visit(request, env, ctx);
+    if (request.method === "POST" && pathname === "/api/signup") return signup(request, env, ctx);
     return env.ASSETS.fetch(request);
   },
 };

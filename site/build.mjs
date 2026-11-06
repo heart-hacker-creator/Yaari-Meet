@@ -73,6 +73,7 @@ function render(page) {
   ${jsonLd(page)}
 </head>
 <body>
+<div id="banner" class="banner" hidden></div>
 <header class="nav">
   <a class="logo" href="/">Yaari<span>Meet</span></a>
   <nav>${nav.map(([href, text]) => `<a href="${href}">${text}</a>`).join("")}</nav>
@@ -115,6 +116,24 @@ ${faq}
   </div>
   <p class="copy">© ${new Date().getFullYear()} ${NAME} · For adults 18+ only · Made in India</p>
 </footer>
+<script>
+  // Once per browser session: tells the server about the visit and gets the banner text.
+  (() => {
+    let first = true;
+    try { first = !sessionStorage.ymVisit; sessionStorage.ymVisit = 1; } catch {}
+    fetch("/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ first, path: location.pathname, referrer: document.referrer }),
+    })
+      .then((r) => r.json())
+      .then(({ banner }) => {
+        const el = document.getElementById("banner");
+        if (banner) { el.textContent = banner; el.hidden = false; }
+      })
+      .catch(() => {});
+  })();
+</script>
 </body>
 </html>
 `;

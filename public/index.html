@@ -28,6 +28,7 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"YaariMeet","url":"https://yaarimeet.pages.dev/","inLanguage":"en-IN"},{"@type":"Organization","name":"YaariMeet","url":"https://yaarimeet.pages.dev/","logo":"https://yaarimeet.pages.dev/icon-512.png","email":"contact@yaarimeet.com"},{"@type":"WebApplication","name":"YaariMeet","url":"https://yaarimeet.pages.dev/","applicationCategory":"CommunicationApplication","operatingSystem":"Android, iOS, Windows, macOS","browserRequirements":"Requires a modern browser with camera access for video chat","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is YaariMeet free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Random video chat and text chat are free forever. Only the optional Only girls / Only boys filters use credits (20 credits per minute, ₹25 = 100 credits)."}},{"@type":"Question","name":"Do I need to download an app?","acceptedAnswer":{"@type":"Answer","text":"No. YaariMeet works in Chrome, Safari and any modern browser on Android, iPhone and computers. You can add it to your home screen like an app."}},{"@type":"Question","name":"How do I talk to strangers on YaariMeet?","acceptedAnswer":{"@type":"Answer","text":"Sign in with Google, choose Random or a filter, pick video or text, and press Start. You are connected to a random person who is online right now."}},{"@type":"Question","name":"Are the girls and boys real?","acceptedAnswer":{"@type":"Answer","text":"Everyone signs in with a real Google account and picks their gender once. People can verify with a short selfie video to get a ✔ Verified badge, and fake genders get reported and banned."}},{"@type":"Question","name":"Is YaariMeet safe?","acceptedAnswer":{"@type":"Answer","text":"Video goes directly between you and the other person and is never recorded. Every chat has a Report button, and our team bans abusive accounts. YaariMeet is for adults 18+ only."}}]}]}</script>
 </head>
 <body>
+<div id="banner" class="banner" hidden></div>
 <header class="nav">
   <a class="logo" href="/">Yaari<span>Meet</span></a>
   <nav><a href="/omegle-alternative/">Omegle alternative</a><a href="/pricing/">Pricing</a><a href="/safety/">Safety</a></nav>
@@ -124,5 +125,23 @@
   </div>
   <p class="copy">© 2026 YaariMeet · For adults 18+ only · Made in India</p>
 </footer>
+<script>
+  // Once per browser session: tells the server about the visit and gets the banner text.
+  (() => {
+    let first = true;
+    try { first = !sessionStorage.ymVisit; sessionStorage.ymVisit = 1; } catch {}
+    fetch("/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ first, path: location.pathname, referrer: document.referrer }),
+    })
+      .then((r) => r.json())
+      .then(({ banner }) => {
+        const el = document.getElementById("banner");
+        if (banner) { el.textContent = banner; el.hidden = false; }
+      })
+      .catch(() => {});
+  })();
+</script>
 </body>
 </html>

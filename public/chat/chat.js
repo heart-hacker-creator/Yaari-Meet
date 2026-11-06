@@ -110,6 +110,18 @@ async function poll() {
   }
 }
 
+// Once per browser session: logs the visit (with who is signed in) and fetches the banner.
+async function pingVisit() {
+  let first = true;
+  try {
+    first = !sessionStorage.ymVisit;
+    sessionStorage.ymVisit = 1;
+  } catch {}
+  const { banner } = await api("/api/visit", { first, path: location.pathname, referrer: document.referrer }).catch(() => ({}));
+  $("banner").textContent = banner ?? "";
+  $("banner").hidden = !banner;
+}
+
 async function boot() {
   ({ data: { session } } = await supabase.auth.getSession());
   if (!session) return show("signin");
@@ -124,6 +136,7 @@ async function boot() {
   }
   await renderLobby();
   show("lobby");
+  pingVisit();
   setInterval(poll, 15000);
 }
 
@@ -414,6 +427,7 @@ $("onboardForm").onsubmit = async (e) => {
   e.preventDefault();
   const { error } = await supabase.rpc("set_profile", { p_name: $("name").value, p_gender: radio("gender") });
   if (error) return toast(error.message);
+  api("/api/signup", {}).catch(() => {});
   boot();
 };
 
