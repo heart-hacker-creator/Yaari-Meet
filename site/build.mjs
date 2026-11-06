@@ -63,6 +63,7 @@ function render(page) {
   <meta property="og:image" content="${url("/og.png")}">
   <meta property="og:locale" content="${lang === "hi" ? "hi_IN" : "en_IN"}">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="google-site-verification" content="GqFX28p-JFuKD5WmJSinZWprJ0tj41IE4TlpFFcLMAk">
   <meta name="theme-color" content="#fbf6ee">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icon-180.png">
